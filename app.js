@@ -1,59 +1,86 @@
-// // Single state object
-// var state = {
-//     items: []
-// };
-var shoppingListArray = []
+//*************** App States ***************
+// Array to hold shopping list objects. Each object has itemName: and checked:
+var itemsInShoppingList = [];
 
+//*************** State Modifications ***************
 
-//*************** State modification functions *************
-// var addItem = function(state, item) {
-//     state.items.push(item);
-// };
-
-// Add item to shopping list array
-function addItemToShoppingListArray () {
-	shoppingListArray.push(itemToAdd);
-	console.log(itemToAdd + " added to the shopping list.");
+// Creates new shopping list object and pushes to itemsInShoppingList array
+function createNewItem(itemToAdd) {
+	var item = {
+		itemName: itemToAdd,
+		checked: false
+	};
+	itemsInShoppingList.push(item);
 }
 
-
-
-
+// Deletes object from shopping list array
+function deleteItem(itemValue) {
+	console.log(itemValue);
+	for (var i = 0; i < itemsInShoppingList.length; i++) {
+		if (itemsInShoppingList[i].itemName === itemValue) {
+			itemsInShoppingList.splice(i, 1);
+		}
+	}
+	console.log(itemsInShoppingList);
+	renderShoppingList()
+}
 
 
 //*************** Render functions ***************
-// var renderList = function(state, element) {
-//     var itemsHTML = state.items.map(function(item) {
-//         return '<li>' + item + '</li>';
-//     });
-//     element.html(itemsHTML);
-// };
+
+// Renders shopping list from itemsInShoppingList array
+function renderShoppingList() {
+	$('ul').empty();
+	for (var i = 0; i < itemsInShoppingList.length; i++) {
+		$('ul').append('<li><span class="shopping-item">' + itemsInShoppingList[i].itemName + '</span><div class="shopping-item-controls"><button class="shopping-item-toggle"><span class="button-label">check</span></button><button class="shopping-item-delete"><span class="button-label">delete</span></button></div></li>');
+		whichItemToDelete();
+		clickCheckButton();
+	}
+	
+}
+
+
+
+// Toggle Check
+function checkOff(event) {
+	console.log('checked!');
+	$(event.currentTarget).closest('li').toggleClass('shopping-item__checked');
+	console.log('added check!');
+
+}
+
+
 
 //*************** Event listeners ***************
-var itemToAdd;
+const $addItemButton = $('#js-addItemButton');
+const $shoppingListEntryBox = $('#shopping-list-entry');
 
-// Add Item Button
-function addThisItem() {
-$('#js-addItemButton').click(function() {
-	event.preventDefault();
-	itemToAdd = $('#shopping-list-entry').val();
-	console.log("We're adding " + itemToAdd +"!");
-	addItemToShoppingListArray();
-})
+// Listens for "Add Item" button click
+function addItem() {
+	$addItemButton.click(function() {
+		event.preventDefault();
+		var itemToAdd = $shoppingListEntryBox.val();
+		createNewItem(itemToAdd);
+		renderShoppingList()
+	})
 }
 
-// Return Button Submit
-$('#shopping-list-entry').keyup(function(event) {
-	if (event.keyCode == 13) {
-		$('js-addItemButton').click()
-	}
-})
-
-
-// Run Application
-
-function runShoppingList() {
-	addThisItem();
+// Listens for Check button click
+function clickCheckButton() {
+	let $checkButton = $('button.shopping-item-toggle');
+	$checkButton.click(function(event) {
+		checkOff(event);
+	})
 }
 
-$(runShoppingList);
+// Listens for Delete button click & finds which item to delete
+function whichItemToDelete() {
+	let itemValue;
+	$('button.shopping-item-delete').click(function(event) {
+		itemValue = $(event.currentTarget).closest('li').text().slice(0,-11);
+		deleteItem(itemValue);
+	})
+}
+
+
+addItem();
