@@ -68,10 +68,9 @@ function renderShoppingList() {
 		// If item object is checked
 			$('ul').append('<li><span class="shopping-item shopping-item__checked">' + itemsInShoppingList[i].itemName + '</span><div class="shopping-item-controls"><button class="shopping-item-toggle"><span class="button-label">check</span></button><button class="shopping-item-delete"><span class="button-label">delete</span></button></div></li>');
 		}
+	}
 		whichItemToDelete();
 		clickCheckButton();
-	}
-	
 }
 
 
@@ -81,7 +80,7 @@ const $shoppingListEntryBox = $('#shopping-list-entry');
 
 // Listens for "Add Item" button click
 function addItem() {
-	$addItemButton.click(function() {
+	$addItemButton.on('click', function() {
 		event.preventDefault();
 		var itemToAdd = $shoppingListEntryBox.val();
 		console.log("adding " + itemToAdd);
@@ -92,13 +91,14 @@ function addItem() {
 
 // Listens for Check button click
 function clickCheckButton() {
-	$('button.shopping-item-toggle').click(function(event) {
+	$('button.shopping-item-toggle').on('click', function(event) {
+		console.log("You clicked the check button");
 		event.preventDefault();
 		itemValue = $(event.currentTarget).closest('li').text().slice(0,-11);
-		console.log("You clicked the check button");
 		checkOff(itemValue);
 	})
 }
+
 
 // Listens for Delete button click & finds which item to delete
 function whichItemToDelete() {
